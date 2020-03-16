@@ -51,21 +51,25 @@ namespace AutomaticTellerMachine
     /**
      *Control class in charge of the bank accounts 
     */
-    class Bank{
+    class Bank : Form{
         private bankAccount[] accounts;
         public Bank()
         {
             accounts = new bankAccount[3];
+            this.Visible = false;
+            this.Hide();
+            this.WindowState = FormWindowState.Minimized;
             accounts[0] = new bankAccount("Steve", 111111, 1111, 300);
             accounts[1] = new bankAccount("Peter", 222222, 2222, 750);
             accounts[2] = new bankAccount("David", 333333, 3333, 3000);
-
-            ATM.myBank = this;
-
-            Console.WriteLine("i made more things uwu");
-
+            ATM.myBank =this;
             ATM ATM1 = new ATM(true, true);
             ATM ATM2 = new ATM(false, true);
+        }
+
+        public void write()
+        {
+            Console.WriteLine("Yay");
         }
     }
 
@@ -89,33 +93,45 @@ namespace AutomaticTellerMachine
         public void contructForm()
         {
             myATM = new Form();
-            myATM.WindowState = FormWindowState.Maximized;
+            myATM.Bounds = Screen.PrimaryScreen.Bounds;
             if (first)
             {
-                myATM.SetBounds(0, 0, myATM.Width / 2, myATM.Height);
+                myATM.SetBounds(0, 0, myATM.Width / 2, myATM.Height - 40);
             }
             else
             {
-                myATM.SetBounds(myATM.Width / 2, 0, myATM.Width / 2, myATM.Height);
+                myATM.SetBounds(myATM.Width / 2, 0, myATM.Width / 2, myATM.Height - 40);
             }
 
             myATM.Show();
             Console.WriteLine("hello i made things i hope u liked");
 
             buttons = new Button[noOfButtons];
-            for(int i = 0; i< noOfButtons; i++)
+            int genericBuffer = 50;
+            int buttonBuffer = 10;
+            int buttonX = (myATM.Width - 2 * genericBuffer - Convert.ToInt32(Math.Sqrt(noOfButtons)*buttonBuffer)) / Convert.ToInt32(Math.Sqrt(noOfButtons));
+            int buttonY = (myATM.Height/2 - 2*genericBuffer - Convert.ToInt32(Math.Sqrt(noOfButtons) * buttonBuffer)) / Convert.ToInt32(Math.Sqrt(noOfButtons));
+            for (int i = 0; i< Math.Sqrt(noOfButtons); i++)
             {
-                buttons[i] = new Button();
-                buttons[i].SetBounds(10 + 65 * i, 310 + 45 * i, 40, 60);
-                myATM.Controls.Add(buttons[i]);                
+                for (int counter = 0; counter < Math.Sqrt(noOfButtons); counter++)
+                {
+                    buttons[i] = new Button();
+                    buttons[i].SetBounds(genericBuffer + i*(buttonBuffer+buttonX), (myATM.Height/2 + genericBuffer) + counter * (buttonBuffer + buttonY), buttonX, buttonY);
+                    myATM.Controls.Add(buttons[i]);
+                }
             }
-
+            
         }
         public void setBank(Bank tempBank)
         {
             myBank = tempBank;
         }
-    }
+    
+        void buttons_Click(Object sender, EventArgs e)
+        {
+
+        }
+}
     static class Program
     {
         /// <summary>
@@ -124,13 +140,11 @@ namespace AutomaticTellerMachine
         [STAThread]
         static void Main()
         {
-            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-
-            Console.WriteLine("pls give money owo");
-
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Bank myBank = new Bank();
+            Application.Run(myBank);
         }
     }
 }
