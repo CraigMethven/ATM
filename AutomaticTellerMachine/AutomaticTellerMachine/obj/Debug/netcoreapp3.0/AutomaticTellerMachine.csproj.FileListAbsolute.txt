@@ -1,0 +1,11 @@
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\bin\Debug\netcoreapp3.0\AutomaticTellerMachine.exe
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\bin\Debug\netcoreapp3.0\AutomaticTellerMachine.deps.json
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\bin\Debug\netcoreapp3.0\AutomaticTellerMachine.runtimeconfig.json
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\bin\Debug\netcoreapp3.0\AutomaticTellerMachine.runtimeconfig.dev.json
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\bin\Debug\netcoreapp3.0\AutomaticTellerMachine.dll
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\bin\Debug\netcoreapp3.0\AutomaticTellerMachine.pdb
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\obj\Debug\netcoreapp3.0\AutomaticTellerMachine.csprojAssemblyReference.cache
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\obj\Debug\netcoreapp3.0\AutomaticTellerMachine.AssemblyInfoInputs.cache
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\obj\Debug\netcoreapp3.0\AutomaticTellerMachine.AssemblyInfo.cs
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\obj\Debug\netcoreapp3.0\AutomaticTellerMachine.dll
+C:\Users\Craig\Documents\Uni\Year2\C#\ATM\AutomaticTellerMachine\AutomaticTellerMachine\obj\Debug\netcoreapp3.0\AutomaticTellerMachine.pdb
