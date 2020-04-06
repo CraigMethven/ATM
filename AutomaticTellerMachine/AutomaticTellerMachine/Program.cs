@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -51,9 +52,13 @@ namespace AutomaticTellerMachine
     /**
      *Control class in charge of the bank accounts 
     */
-    class Bank : Form{
+    class Bank : Form
+    {
         private static int noOfAccounts = 3;
         private bankAccount[] accounts;
+        private Thread atm1_t;
+        private Thread atm2_t;
+
         public Bank()
         {
             accounts = new bankAccount[noOfAccounts];
@@ -63,25 +68,77 @@ namespace AutomaticTellerMachine
             accounts[0] = new bankAccount("Steve", 111111, 1111, 300);
             accounts[1] = new bankAccount("Peter", 222222, 2222, 750);
             accounts[2] = new bankAccount("David", 333333, 3333, 3000);
+
             ATM.myBank = this;
-            ATM ATM1 = new ATM(true, true);
-            ATM ATM2 = new ATM(false, true);
+
+
+
+
+            Thread ATM1 = new Thread(new ThreadStart(startatm1));
+            Thread ATM2 = new Thread(new ThreadStart(startatm2));
+
+            ATM1.Start();
+            ATM2.Start();
+
+            //   new Thread(() =>
+            //   {
+            //       Thread.Sleep(6000);
+            //       createATM1s();
+            //  }) .Start();
+
+            //  new Thread(() =>
+            //   {
+            //        Thread.Sleep(6000);
+            //        createATM2s();
+            //    }).Start();
+
+            //      ThreadStart atm1 = new ThreadStart(createATM1s);
+            //       atm1_t = new Thread(atm1);
+            //      ThreadStart atm2 = new ThreadStart(createATM2s);
+            //       atm2_t = new Thread(atm2);
+
+            //  ATM ATM1 = new ATM(true, true);
+            //   ATM ATM2 = new ATM(false, true);
         }
+        private void startatm1()
+        {
+            Thread.Sleep(3000);
+            var frm = new ATM(true, true);
+            frm.Visible = false;
+            frm.ShowDialog();
+        }
+        private void startatm2()
+        {
+            Thread.Sleep(2000);
+            var frm = new ATM(false, true);
+            frm.Visible = false;
+            frm.ShowDialog();
+        }
+        /*       public void createATM1s()
+               {
+
+                   ATM ATM1 = new ATM(true, true);
+
+               }
+               public void createATM2s()
+               {
+
+                   ATM ATM2 = new ATM(false, true);
+        */
+
 
         //Finds an account and if found returns place in the array else returns -1
         public int findAccount(int inputtingNum)
         {
-            for(int i =0; i< noOfAccounts; i++)
+            for (int i = 0; i < noOfAccounts; i++)
             {
-                if(accounts[i].getAccountNum() == inputtingNum)
+                if (accounts[i].getAccountNum() == inputtingNum)
                 {
                     return i;
                 }
             }
             return -1;
         }
-
-
         //Returns the bank account in the place passed in
         public bankAccount getAccount(int arrayNum)
         {
@@ -412,33 +469,147 @@ namespace AutomaticTellerMachine
             }
         }
 
+        bool complete = false;
+        string inUse = "";
         public void withdraw(string buttonID)
         {
-            //check if the account is in use and if it isnt then continue if it is wait for a bit then check again
-            bool complete = false;
-            //myATMScreen.setError("I'm trying");
-
+            //set the transaction to be in use and incomplete
+            inUse = Thread.CurrentThread.Name;
+            complete = false;
 
             switch (buttonID)
             {
                 case "Side0":
-                    //withdraw 10
-                    account.decrementBalance(10);
+                    //display withdrawing (amount)
+                    myATMScreen.setMain("Withdrawing £10...");
+                    Application.DoEvents();
+                    Thread.Sleep(5000);
+                    //wait for 5 seconds
+
+                    if (working)
+                        //if race condition IS NOT enabled
+                    {
+                        if (inUse != Thread.CurrentThread.Name)
+                            //if the account isnt in use by another thread 
+                        {
+
+                            Thread.Sleep(5000);
+                            withdraw("Side0");
+                            //wait for 5 seconds and then run the method again knowing the amount wanted withdrawn
+                        }
+                    } 
+                    
+                    if(account.getBalance() >= 10)
+                        //if there is (amount) or more in the account then
+                    {
+                        account.decrementBalance(10);
+                        //withdraw amount
+                    }
+                    else
+                    {
+                        //if there isnt (amount) in the account
+
+                        myATMScreen.setMain("Insufficient Funds");
+                        //tell the user there isnt enough in the account
+                        Application.DoEvents();
+                        Thread.Sleep(3000);
+                        changePhase("AccountNum");
+                        //reset the ATM
+                    }
+                    
+                    //set inUse to blank and the transaction as complete.
+                    inUse = "";
                     complete = true;
                     break;
                 case "Side1":
                     //withdraw 20
-                    account.decrementBalance(20);
+                    myATMScreen.setMain("Withdrawing £20...");
+                    Application.DoEvents();
+                    Thread.Sleep(5000);
+
+                    if (working)
+                    {
+                        if (inUse != Thread.CurrentThread.Name)
+                        {
+                            Thread.Sleep(5000);
+                            withdraw("Side1");
+                        }
+                    }
+
+                    if (account.getBalance() >= 20)
+                    {
+                        account.decrementBalance(20);
+                    }
+                    else
+                    {
+                        myATMScreen.setMain("Insufficient Funds");
+                        Application.DoEvents();
+                        Thread.Sleep(3000);
+                        changePhase("AccountNum");
+                    }
+
+                    inUse = "";
                     complete = true;
                     break;
                 case "Side2":
                     //withdraw 50
-                    account.decrementBalance(50);
+                    myATMScreen.setMain("Withdrawing £50...");
+                    Application.DoEvents();
+                    Thread.Sleep(5000);
+
+                    if (working)
+                    {
+                        if (inUse != Thread.CurrentThread.Name)
+                        {
+                            Thread.Sleep(5000);
+                            withdraw("Side2");
+                        }
+                    }
+
+                    if (account.getBalance() >= 50)
+                    {
+                        account.decrementBalance(50);
+                    }
+                    else
+                    {
+                        myATMScreen.setMain("Insufficient Funds");
+                        Application.DoEvents();
+                        Thread.Sleep(3000);
+                        changePhase("AccountNum");
+                    }
+
+                    inUse = "";
                     complete = true;
                     break;
                 case "Side3":
                     //withdraw 100
-                    account.decrementBalance(100);
+                    myATMScreen.setMain("Withdrawing £100...");
+                    Application.DoEvents();
+                    Thread.Sleep(5000);
+
+                    if (working)
+                    {
+                        if (inUse != Thread.CurrentThread.Name)
+                        {
+                            Thread.Sleep(5000);
+                            withdraw("Side3");
+                        }
+
+                    }
+
+                    if (account.getBalance() >= 100)
+                    {
+                        account.decrementBalance(100);
+                    }
+                    else
+                    {
+                        myATMScreen.setMain("Insufficient Funds");
+                        Application.DoEvents();
+                        Thread.Sleep(3000);
+                        changePhase("AccountNum");
+                    }
+
+                    inUse = "";
                     complete = true;
                     break;
                 case "Side4":
@@ -452,6 +623,11 @@ namespace AutomaticTellerMachine
             
             if(complete == true)
             {
+                myATMScreen.setMain("Please take your money");
+                myATMScreen.setError("Your new balance is £" + account.getBalance());
+                Application.DoEvents();
+                Thread.Sleep(5000);
+
                 changePhase("AccountNum");
             }
 
@@ -609,17 +785,53 @@ namespace AutomaticTellerMachine
                     changePhase("readNumber");
                     myATMScreen.setError("Enter a valid number to withdraw");
                 }
+                else if (buttonID == "Clear")
+                {
+                    balanceInput = "";
+                    myATMScreen.setInput("");
+                }
                 else {
-                    account.decrementBalance(Convert.ToInt32(balanceInput));
+                    //withdraw (amount)
+                    myATMScreen.setMain("Withdrawing £" + balanceInput + "...");
+                    Application.DoEvents();
+                    Thread.Sleep(1000);
+
+                    if (working)
+                    {
+                        if (inUse != Thread.CurrentThread.Name)
+                        {
+                            Thread.Sleep(5000);
+                            readNumber("Enter");
+                        }   
+                    }
+
+                    if (account.getBalance() >= Convert.ToInt32(balanceInput))
+                    {
+                        account.decrementBalance(Convert.ToInt32(balanceInput));
+                    }
+                    else
+                    {
+                        myATMScreen.setMain("Insufficient Funds");
+                        Application.DoEvents();
+                        Thread.Sleep(3000);
+                        changePhase("AccountNum");
+                    }
+
+                    inUse = "";
+                    complete = true;
                     myATMScreen.setInput("Your new balance is £" + account.getBalance());
+                    Application.DoEvents();
+                    Thread.Sleep(5000);
                 }
 
                 changePhase("AccountNum");
                     
             }
             else if (buttonID == "Clear")
-            { 
-                changePhase("readNumber");
+            {
+                balanceInput = "";
+                myATMScreen.setInput("");
+
             }
             else if (buttonID == "Cancel")
             {
@@ -627,6 +839,7 @@ namespace AutomaticTellerMachine
             }
             else if (buttonID.Length == 1)
             {
+                //
                 balanceInput += buttonID;
                 myATMScreen.setInput(balanceInput);
             }
@@ -643,8 +856,8 @@ namespace AutomaticTellerMachine
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Bank myBank = new Bank();
-            Application.Run(myBank);
+
+            new Bank();
         }
     }
 }
